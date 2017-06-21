@@ -50,26 +50,26 @@ do
             ;;
         -d|artifactDirectory)
 			ARTIFACT_DIRECTORY=$VAL
-			echo "artifact directory: $ARTIFACT_DIRECTORY. Script will look for this exact directory. If it exists, it will zip and attach all contents to release."
+			echo "	- artifact directory: $ARTIFACT_DIRECTORY. Script will look for this exact directory. If it exists, it will zip and attach all contents to release."
 			;;
         -f|--artifactFile)
             ARTIFACT_FILE=$VAL
-            echo "artifact file path: $ARTIFACT_FILE. Script will look for this exact build artifact."
+            echo "	- artifact file path: $ARTIFACT_FILE. Script will look for this exact build artifact."
             ;;
         -m|--releaseDesc) #rename
             DESCRIPTION=$VAL
             ;;
        	-o|--organization)
 			ORGANIZATION=$VAL
-			echo "organization that owns repository: $ORGANIZATION"
+			echo "	- organization that owns repository: $ORGANIZATION"
 			;;
-       v|--executableVersion)
+        -ev|--executableVersion)
 			EXECUTABLE_VERSION=$VAL
-			echo "github-release executable version: $EXECUTABLE_VERSION"
+			echo "	- github-release executable version: $EXECUTABLE_VERSION"
 			;;
 		-ep|--executablePath)
 			EXECUTABLE_PATH=$VAL
-			echo "github-release excutable location path: $EXECUTABLE_PATH"
+			echo "	- github-release excutable location path: $EXECUTABLE_PATH"
 			;;
         -h|--help) 
             echo "HELP MENU - options"
@@ -91,10 +91,10 @@ done
 
 if [ -z "$BUILD_TOOL" ]; then 
     echo " --- ERROR: BUILD_TOOL ($BUILD_TOOL) (-b|--buildTool) must be specified --- "
-    exit 0
+    exit 1
 elif ! [ -z "$ARTIFACT_DIRECTORY" ] && ! [ -z "$ARTIFACT_FILE"]; then
-	echo " --- ERROR: ARTIFACT_DIRECTORY ($ARTIFACT_DIRECTORY) and ARTIFACT_FILE ($ARTIFACT_FILE) cannot both be specified --- "
-	exit 0
+	echo " --- ERROR: ARTIFACT_DIRECTORY ($ARTIFACT_DIRECTORY) (-d|--artifactDirectory) and ARTIFACT_FILE ($ARTIFACT_FILE) (-f|--artifactFile) cannot both be specified --- "
+	exit 1
 fi
 
 shopt -s nocasematch
@@ -106,7 +106,7 @@ elif [[ "$BUILD_TOOL" == "gradle" ]]; then
 	RELEASE_VERSION=${RELEASE_VERSION##* }
 else 
 	echo " --- ERROR: build tool must either be maven or gradle (you entered: $BUILD_TOOL) --- "
-	exit 0
+	exit 1
 fi
 shopt -u nocasematch
 
@@ -204,17 +204,18 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 		if [ -z "$POST_COMMAND_OUTPUT" ]; then
 			echo " --- Artifacts attached to release on GitHub --- "
 			echo " --- GitHub Autorelease Script Ending --- "
+			exit 0
 		elif [[ "$POST_COMMAND_OUTPUT" == "null" ]]; then
 			echo " --- GitHub Autorelease Script Ending --- "
 			exit 0
 		else
 			echo " --- $POST_COMMAND_OUTPUT --- "
-			exit 0
+			exit 1
 		fi
 
 	else 
 		echo " --- $RELEASE_COMMAND_OUTPUT --- "
-		exit 0
+		exit 1
 	fi 
 
 else
