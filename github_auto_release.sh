@@ -28,7 +28,7 @@ ARTIFACT_FILE=""
 ARTIFACT_DIRECTORY=""
 DESC="GitHub Autorelease"
 EXECUTABLE_VERSION="v0.7.2" #default to this because this is what script has been tested/based on
-EXECUTABLE_PATH=~/"temp/blackducksoftware"
+EXECUTABLE_PATH=~/temp/blackducksoftware
 ORGANIZATION="patrickwilliamconway" #final version this will be blackducksoftware
 
 echo -e " --- ${GREEN}Starting GitHub Autorelease Script${NC} --- " 
@@ -54,13 +54,13 @@ do
 			ARTIFACT_DIRECTORY=$VAL
 			echo -e "${BLUE}artifact directory:${NC} $ARTIFACT_DIRECTORY. Script will look for this exact directory. If it exists, it will zip and attach all contents to release."
 			;;
-        # -g|--gitToken)
-        #     export GITHUB_TOKEN=$VAL #this will exist within jenkins
-        #     ;;
         -f|--artifactFile)
             ARTIFACT_FILE=$VAL
             echo -e "${BLUE}artifact file path:${NC} $ARTIFACT_FILE. Script will look for this exact build artifact."
             ;;
+        # -g|--gitToken)
+        #     export GITHUB_TOKEN=$VAL #this will exist within jenkins
+        #     ;;
         -m|--releaseDesc) #rename
             DESCRIPTION=$VAL
             ;;
@@ -95,7 +95,7 @@ do
     esac
 done
 
-if [ -z "$BUILD_TOOL" ]; then # || [ -z "$GITHUB_TOKEN" ] and GITHUB_TOKEN ($GITHUB_TOKEN) must be specified (-g|--gitToken)
+if [ -z "$BUILD_TOOL" ]; then 
     echo -e " --- ${RED}ERROR: BUILD_TOOL ($BUILD_TOOL) (-b|--buildTool)${NC} --- "
     exit 1
 elif ! [ -z "$ARTIFACT_DIRECTORY" ] && ! [ -z "$ARTIFACT_FILE"]; then
@@ -120,6 +120,10 @@ shopt -u nocasematch
 if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION" != *"SNAPSHOT"* ]]; then #regex matches x.y.z where x,y,z are integers
 
 	####################################	FINDING GITHUB-RELEASE EXECUTABLE FILE 		#####################################
+	if [ ! -d "$EXECUTABLE_PATH" ]; then
+		mkdir -p "$EXECUTABLE_PATH"
+	fi
+
 	EXECUTABLE_PATH_EXISTS=$(find $EXECUTABLE_PATH -name "github-release")
 	if [ -z "$EXECUTABLE_PATH_EXISTS" ]; then 
 		echo -e " --- ${BLUE}github-release executable does not already exist on this machine${NC} --- "
