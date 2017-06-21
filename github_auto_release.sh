@@ -154,7 +154,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 
 				cd $EXECUTABLE_PATH
 				
-				bunzip2 -d $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
+				tar xvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 --strip-components 1 
 				
 				echo " "
 				ls $EXECUTABLE_PATH
