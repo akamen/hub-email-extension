@@ -127,11 +127,10 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 	EXECUTABLE_PATH_EXISTS=$(find $EXECUTABLE_PATH -name "github-release")
 	if [ -z "$EXECUTABLE_PATH_EXISTS" ]; then 
 		echo -e " --- ${BLUE}github-release executable does not already exist on this machine${NC} --- "
-		# GO=$(which go) #need to accomodate the windows equivalent
-		# if [ -z "$GO" ]; then #if go isn't installed on the machine, pull binaries from releases directly
+		GO=$(which go) #need to accomodate the windows equivalent
+		if [ -z "$GO" ]; then #if go isn't installed on the machine, pull binaries from releases directly
 			OS_TYPE=$(uname -a | awk {'print $1'}) 
 			OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]') #convert OSTYPE to lower case
-			# shopt -s nocasematch
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
 				wget -O $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
@@ -147,22 +146,20 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				rm -R $EXECUTABLE_PATH/bin $EXECUTABLE_PATH/windows-amd64-github-release.zip
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
 			fi
-			# shopt -s nocasematch
-
-		# else
-		# 	echo -e " --- ${BLUE}Getting executable via go command: go get github.com/aktau/github-release${NC} --- "
-		# 	go get github.com/aktau/github-release
-		# 	if [[ -z "$GOPATH" ]]; then
-		# 		mv ~/go/bin/github-release $EXECUTABLE_PATH 
-		# 		rm -rf ~/go/pkg/darwin_amd64
-		# 		rm -rf ~/go/src/github.com/aktau ~/go/src/github.com/dustin ~/go/src/github.com/tomnomnom ~/go/src/github.com/voxelbrain
-		# 	else
-		# 		mv "$GOPATH"/bin/github-release $EXECUTABLE_PATH 
-		# 		rm -rf "$GOPATH"/pkg/darwin_amd64
-		# 		rm -rf "$GOPATH"/src/github.com/aktau "$GOPATH"/src/github.com/dustin "$GOPATH"/src/github.com/tomnomnom "$GOPATH"/src/github.com/voxelbrain
-		# 	fi
-		# 	echo " --- github-release executable now located in $EXECUTABLE_PATH --- "	
-		# fi
+		else
+			echo -e " --- ${BLUE}Getting executable via go command: go get github.com/aktau/github-release${NC} --- "
+			go get github.com/aktau/github-release
+			if [[ -z "$GOPATH" ]]; then
+				mv ~/go/bin/github-release $EXECUTABLE_PATH 
+				rm -rf ~/go/pkg/darwin_amd64
+				rm -rf ~/go/src/github.com/aktau ~/go/src/github.com/dustin ~/go/src/github.com/tomnomnom ~/go/src/github.com/voxelbrain
+			else
+				mv "$GOPATH"/bin/github-release $EXECUTABLE_PATH 
+				rm -rf "$GOPATH"/pkg/darwin_amd64
+				rm -rf "$GOPATH"/src/github.com/aktau "$GOPATH"/src/github.com/dustin "$GOPATH"/src/github.com/tomnomnom "$GOPATH"/src/github.com/voxelbrain
+			fi
+			echo " --- github-release executable now located in $EXECUTABLE_PATH --- "	
+		fi
 	fi
 
 
@@ -177,7 +174,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 	echo -e "${BLUE}Repository Name:${NC} $REPO_NAME"
 	echo -e "${BLUE}Release Version:${NC} $RELEASE_VERSION"
 
-	# RELEASE_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release release --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $RELEASE_VERSION --description "$DESC" 2>&1)
+	RELEASE_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release release --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $RELEASE_VERSION --description "$DESC" 2>&1)
 	
 	if [ -z "$RELEASE_COMMAND_OUTPUT" ]; then
 		echo -e " --- ${GREEN}Release posted to GitHub${NC} --- "
@@ -187,13 +184,13 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			ARTIFACT_NAME=$(basename "$ARTIFACT_FILE")
 			echo -e "${BLUE}Artifact File:${NC} $ARTIFACT_FILE"
 			echo -e "${BLUE}Artifact Name:${NC} $ARTIFACT_NAME"
-			# POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)	
+			POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)	
 		elif ! [ -z "$ARTIFACT_DIRECTORY" ]; then
 			TEMP=$ARTIFACT_DIRECTORY
 		  	ARTIFACT_DIRECTORY=$(find . -iname "$ARTIFACT_DIRECTORY")
 		  	ARTIFACT_NAME="$REPO_NAME"-"$RELEASE_VERSION"_"$TEMP"Dir.zip
 		  	zip -r "$ARTIFACT_NAME".zip $ARTIFACT_DIRECTORY 
-		  	# POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_NAME.zip" 2>&1)	
+		  	POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_NAME.zip" 2>&1)	
 		else 
 			ARTIFACT_FILE=$(find . -iname "$REPO_NAME-$RELEASE_VERSION.zip")
 		
@@ -205,7 +202,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				ARTIFACT_NAME=$(basename "$ARTIFACT_FILE")
 				echo -e "${BLUE}Artifact ARTIFACT_FILE:${NC} $ARTIFACT_FILE"
 				echo -e "${BLUE}Artifact Name:${NC} $ARTIFACT_NAME" 
-				# POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)
+				POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)
 			else 
 				echo -e " --- ${YELLOW}No artifact files found. No artifact will be attached to release.${NC} --- "
 				POST_COMMAND_OUTPUT="null"
