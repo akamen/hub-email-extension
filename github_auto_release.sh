@@ -23,7 +23,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m' 
 
 BUILD_TOOL=""
-GITHUB_TOKEN=""
 ARTIFACT_FILE=""
 ARTIFACT_DIRECTORY=""
 DESC="GitHub Autorelease"
@@ -32,6 +31,8 @@ EXECUTABLE_PATH=~/temp/blackducksoftware
 ORGANIZATION="patrickwilliamconway" #final version this will be blackducksoftware
 
 echo -e " --- ${GREEN}Starting GitHub Autorelease Script${NC} --- " 
+
+echo $GITHUB_TOKEN
 
 ####################################	PARSING INPUT PARAMETERS 		#####################################
 args=("$@")
@@ -57,9 +58,6 @@ do
         -f|--artifactFile)
             ARTIFACT_FILE=$VAL
             echo -e "${BLUE}artifact file path:${NC} $ARTIFACT_FILE. Script will look for this exact build artifact."
-            ;;
-        -g|--gitToken)
-            export GITHUB_TOKEN=$VAL #this will exist within jenkins
             ;;
         -m|--releaseDesc) #rename
             DESCRIPTION=$VAL
