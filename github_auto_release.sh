@@ -145,7 +145,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 					# sudo make install
 					brew install wget
 				elif [ "$OS_TYPE" == "linux" ]; then
-
+					echo "intsall wget for linux"
 				fi
 			fi
 
