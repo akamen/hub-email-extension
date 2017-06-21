@@ -32,8 +32,6 @@ ORGANIZATION="patrickwilliamconway" #final version this will be blackducksoftwar
 
 echo -e " --- ${GREEN}Starting GitHub Autorelease Script${NC} --- " 
 
-# echo $GITHUB_TOKEN
-
 ####################################	PARSING INPUT PARAMETERS 		#####################################
 args=("$@")
 for ((i=0; i<$#; i=i+2));
@@ -120,7 +118,6 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 	####################################	FINDING GITHUB-RELEASE EXECUTABLE FILE 		#####################################
 	if [ ! -d "$EXECUTABLE_PATH" ]; then
 		mkdir -p "$EXECUTABLE_PATH"
-		echo "$EXECUTABLE_PATH was just created"
 	fi
 
 
@@ -131,24 +128,14 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 		if [ -z "$GO" ]; then #if go isn't installed on the machine, pull binaries from releases directly
 			OS_TYPE=$(uname -a | awk {'print $1'}) 
 			OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]') #convert OSTYPE to lower case
-			
-			# WGET=$(which wget)
-			# if [ -z $WGET ]; then
-			# 	if [ "$OS_TYPE" == "darwin" ]; then
-
-			# 	elif [ "$OS_TYPE" == "linux" ]; then
-			# 		echo "intsall wget for linux"
-			# 	fi
-			# fi
-
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
 				curl -OL "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
 				tar -zxvf "$OS_TYPE"-amd64-github-release.tar.bz2
-				mv bin/darwin/amd64/github-release $EXECUTABLE_PATH
+				mv bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH
 				rm -R "$OS_TYPE"-amd64-github-release.tar.bz2 bin
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
-			elif [[ "$OS_TYPE" == "mingw" ]]; then #windows section needs to be worked on
+			elif [[ "$OS_TYPE" == "mingw" ]]; then #haven't tested on windows
 				curl -o $EXECUTABLE_PATH/windows-amd64-github-release.zip "https://github.com/aktau/github-release/releases/download/v0.7.2/windows-amd64-github-release.zip" 
 				unzip $EXECUTABLE_PATH/windows-amd64-github-release.zip -d $EXECUTABLE_PATH/
 				mv $EXECUTABLE_PATH/bin/windows/amd64/github-release.exe $EXECUTABLE_PATH/
