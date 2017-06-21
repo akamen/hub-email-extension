@@ -122,8 +122,8 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 	####################################	FINDING GITHUB-RELEASE EXECUTABLE FILE 		#####################################
 	if [ ! -d "$EXECUTABLE_PATH" ]; then
 		mkdir -p "$EXECUTABLE_PATH"
+		echo "$EXECUTABLE_PATH was just created"
 	fi
-
 
 
 	EXECUTABLE_PATH_EXISTS=$(find $EXECUTABLE_PATH -name "github-release")
@@ -146,6 +146,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
 				curl -o $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
+				find . -name $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				bzip2 -d $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				tar -xvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar -C $EXECUTABLE_PATH/
 				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH/github-release
