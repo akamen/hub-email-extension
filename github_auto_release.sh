@@ -137,15 +137,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			WGET=$(which wget)
 			if [ -z $WGET ]; then
 				if [ "$OS_TYPE" == "darwin" ]; then
-					cd ~
-					curl -O http://ftp.gnu.org/gnu/wget/wget-1.19.tar.gz
-					tar -xzf wget-1.19.tar.gz
-					cd wget-1.19
-					./configure --with-ssl=openssl --with-libssl-prefix=~/local/ssl
-					make
-					sudo make install
-					wget --help
-					cd .. && rm -rf wget*
+					curl --help
 				elif [ "$OS_TYPE" == "linux" ]; then
 					echo "intsall wget for linux"
 				fi
