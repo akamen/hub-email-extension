@@ -32,7 +32,7 @@ ORGANIZATION="patrickwilliamconway" #final version this will be blackducksoftwar
 
 echo -e " --- ${GREEN}Starting GitHub Autorelease Script${NC} --- " 
 
-echo $GITHUB_TOKEN
+# echo $GITHUB_TOKEN
 
 ####################################	PARSING INPUT PARAMETERS 		#####################################
 args=("$@")
