@@ -134,25 +134,25 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			OS_TYPE=$(uname -a | awk {'print $1'}) 
 			OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]') #convert OSTYPE to lower case
 			
-			WGET=$(which wget)
-			if [ -z $WGET ]; then
-				if [ "$OS_TYPE" == "darwin" ]; then
-					curl --help
-				elif [ "$OS_TYPE" == "linux" ]; then
-					echo "intsall wget for linux"
-				fi
-			fi
+			# WGET=$(which wget)
+			# if [ -z $WGET ]; then
+			# 	if [ "$OS_TYPE" == "darwin" ]; then
+
+			# 	elif [ "$OS_TYPE" == "linux" ]; then
+			# 		echo "intsall wget for linux"
+			# 	fi
+			# fi
 
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
-				wget -O $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
+				curl -o $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
 				bzip2 -d $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				tar -xvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar -C $EXECUTABLE_PATH/
 				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH/github-release
 				rm -R $EXECUTABLE_PATH/bin $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
 			elif [[ "$OS_TYPE" == "mingw" ]]; then #windows section needs to be worked on
-				wget -O $EXECUTABLE_PATH/windows-amd64-github-release.zip "https://github.com/aktau/github-release/releases/download/v0.7.2/windows-amd64-github-release.zip" 
+				curl -o $EXECUTABLE_PATH/windows-amd64-github-release.zip "https://github.com/aktau/github-release/releases/download/v0.7.2/windows-amd64-github-release.zip" 
 				unzip $EXECUTABLE_PATH/windows-amd64-github-release.zip -d $EXECUTABLE_PATH/
 				mv $EXECUTABLE_PATH/bin/windows/amd64/github-release.exe $EXECUTABLE_PATH/
 				rm -R $EXECUTABLE_PATH/bin $EXECUTABLE_PATH/windows-amd64-github-release.zip
