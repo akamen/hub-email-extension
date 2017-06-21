@@ -150,16 +150,17 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				echo $EXECUTABLE_PATH
 				ls $EXECUTABLE_PATH
 				echo " "
-				# bzip2 -dk $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
-				# ls $EXECUTABLE_PATH
-				# echo " "
+				mkdir temp
+				cd temp
+				
 				tar -vxjf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				ls $EXECUTABLE_PATH
 				echo " "
-				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH/github-release
+				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release ..
 				ls $EXECUTABLE_PATH
 				echo " "
-				rm -R $EXECUTABLE_PATH/bin $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar
+				cd ..
+				rmdir temp
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
 			elif [[ "$OS_TYPE" == "mingw" ]]; then #windows section needs to be worked on
 				curl -o $EXECUTABLE_PATH/windows-amd64-github-release.zip "https://github.com/aktau/github-release/releases/download/v0.7.2/windows-amd64-github-release.zip" 
