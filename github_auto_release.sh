@@ -137,8 +137,15 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			WGET=$(which wget)
 			if [ -z $WGET ]; then
 				if [ "$OS_TYPE" == "darwin" ]; then
-					~/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-					brew install wget
+					cd ~
+					curl -O http://ftp.gnu.org/gnu/wget/wget-1.19.tar.gz
+					tar -xzf wget-1.19.tar.gz
+					cd wget-1.19
+					./configure --with-ssl=openssl --with-libssl-prefix=~/local/ssl
+					make
+					sudo make install
+					wget --help
+					cd .. && rm -rf wget*
 				elif [ "$OS_TYPE" == "linux" ]; then
 					echo "intsall wget for linux"
 				fi
