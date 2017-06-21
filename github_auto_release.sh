@@ -145,22 +145,18 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
-				curl -OL $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
+				curl -OL "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
 				
 				echo " "
 				echo $EXECUTABLE_PATH
 				ls $EXECUTABLE_PATH
 				echo "pwd: $PWD"
-
-				cd $EXECUTABLE_PATH
-				
+								
 				tar -zxvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				
 				echo " "
 				ls $EXECUTABLE_PATH
 				echo "pwd: $PWD"
-
-				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release ..
 				
 				echo " "
 				ls $EXECUTABLE_PATH
