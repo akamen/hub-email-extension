@@ -40,7 +40,7 @@ do
     if [[ "$VAL" == -* ]] || [[ "$VAL" == --* ]] || [[ -z "$VAL" ]]; then #should this just be a check for an empty string, or should it be like it is?
     	if [[ "$FLAG" != "-h" ]] && [[ "$FLAG" != "--help" ]]; then
 	    	echo " --- ERROR: Incorrectly formatted VAL input. Flag/Value pair < $FLAG, $VAL > causing error. --- "
-	    	exit 0
+	    	exit 1
     	fi
     fi
 
@@ -80,11 +80,11 @@ do
 			echo "-o|--organization		   		optional: the name of the organization under which the repo is located (default is blackducksoftware)"
 			echo "-ev|--executableVersion   			optional: which version of the GitHub-Release executable to be used (default is v0.7.2)"
 			echo "-ep|--executablePath 	   			optional: where on the user's machine the GitHub-Release executable will live (defualt is ~/temp/blackducksoftware)"
-			exit 0
+			exit 1
 			;;
 		*)
 			echo " --- ERROR: unrecognized flag variable in Flag/Value pair: < $FLAG, $VAL > --- "
-			exit 0
+			exit 1
 			;;
     esac
 done
