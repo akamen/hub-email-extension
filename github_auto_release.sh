@@ -29,7 +29,7 @@ EXECUTABLE_VERSION="v0.7.2" #default to this because this is what script has bee
 EXECUTABLE_PATH=~/temp/blackducksoftware
 ORGANIZATION="patrickwilliamconway" #final version this will be blackducksoftware
 
-echo -e " --- Starting GitHub Autorelease Script --- " 
+echo " --- Starting GitHub Autorelease Script --- " 
 
 ####################################	PARSING INPUT PARAMETERS 		#####################################
 args=("$@")
@@ -39,7 +39,7 @@ do
     VAL=${args[$i+1]}
     if [[ "$VAL" == -* ]] || [[ "$VAL" == --* ]] || [[ -z "$VAL" ]]; then #should this just be a check for an empty string, or should it be like it is?
     	if [[ "$FLAG" != "-h" ]] && [[ "$FLAG" != "--help" ]]; then
-	    	echo -e " --- ERROR: Incorrectly formatted VAL input. Flag/Value pair < $FLAG, $VAL > causing error. --- "
+	    	echo " --- ERROR: Incorrectly formatted VAL input. Flag/Value pair < $FLAG, $VAL > causing error. --- "
 	    	exit 1
     	fi
     fi
@@ -50,62 +50,62 @@ do
             ;;
         -d|artifactDirectory)
 			ARTIFACT_DIRECTORY=$VAL
-			echo -e "artifact directory: $ARTIFACT_DIRECTORY. Script will look for this exact directory. If it exists, it will zip and attach all contents to release."
+			echo "artifact directory: $ARTIFACT_DIRECTORY. Script will look for this exact directory. If it exists, it will zip and attach all contents to release."
 			;;
         -f|--artifactFile)
             ARTIFACT_FILE=$VAL
-            echo -e "artifact file path: $ARTIFACT_FILE. Script will look for this exact build artifact."
+            echo "artifact file path: $ARTIFACT_FILE. Script will look for this exact build artifact."
             ;;
         -m|--releaseDesc) #rename
             DESCRIPTION=$VAL
             ;;
        	-o|--organization)
 			ORGANIZATION=$VAL
-			echo -e "organization that owns repository: $ORGANIZATION"
+			echo "organization that owns repository: $ORGANIZATION"
 			;;
-        -ev|--executableVersion)
+       v|--executableVersion)
 			EXECUTABLE_VERSION=$VAL
-			echo -e "github-release executable version: $EXECUTABLE_VERSION"
+			echo "github-release executable version: $EXECUTABLE_VERSION"
 			;;
 		-ep|--executablePath)
 			EXECUTABLE_PATH=$VAL
-			echo -e "github-release excutable location path: $EXECUTABLE_PATH"
+			echo "github-release excutable location path: $EXECUTABLE_PATH"
 			;;
         -h|--help) 
-            echo -e "HELP MENU - options"
-			echo -e "-b|--buildTool 					required: specify build tool"
-			echo -e "-f|--artifactFile        			optional: specify file path to project's artifact file"
-			echo -e "-d|--artifactDirectory 				optional: specify a directory to be zipped and released <CANNOT SPECIFY BOTH A DIRECTORY AND FILE>"
-			echo -e "-m|--releaseDesc         			optional: add description for release to github" 
-			echo -e "-o|--organization		   		optional: the name of the organization under which the repo is located (default is blackducksoftware)"
-			echo -e "-ev|--executableVersion   			optional: which version of the GitHub-Release executable to be used (default is v0.7.2)"
-			echo -e "-ep|--executablePath 	   			optional: where on the user's machine the GitHub-Release executable will live (defualt is ~/temp/blackducksoftware)"
+            echo "HELP MENU - options"
+			echo "-b|--buildTool 					required: specify build tool"
+			echo "-f|--artifactFile        			optional: specify file path to project's artifact file"
+			echo "-d|--artifactDirectory 				optional: specify a directory to be zipped and released <CANNOT SPECIFY BOTH A DIRECTORY AND FILE>"
+			echo "-m|--releaseDesc         			optional: add description for release to github" 
+			echo "-o|--organization		   		optional: the name of the organization under which the repo is located (default is blackducksoftware)"
+			echo "-ev|--executableVersion   			optional: which version of the GitHub-Release executable to be used (default is v0.7.2)"
+			echo "-ep|--executablePath 	   			optional: where on the user's machine the GitHub-Release executable will live (defualt is ~/temp/blackducksoftware)"
 			exit 1
 			;;
 		*)
-			echo -e " --- ERROR: unrecognized flag variable in Flag/Value pair: < $FLAG, $VAL > --- "
+			echo " --- ERROR: unrecognized flag variable in Flag/Value pair: < $FLAG, $VAL > --- "
 			exit 1
 			;;
     esac
 done
 
 if [ -z "$BUILD_TOOL" ]; then 
-    echo -e " --- ERROR: BUILD_TOOL ($BUILD_TOOL) (-b|--buildTool) must be specified --- "
+    echo " --- ERROR: BUILD_TOOL ($BUILD_TOOL) (-b|--buildTool) must be specified --- "
     exit 1
 elif ! [ -z "$ARTIFACT_DIRECTORY" ] && ! [ -z "$ARTIFACT_FILE"]; then
-	echo -e " --- ERROR: ARTIFACT_DIRECTORY ($ARTIFACT_DIRECTORY) and ARTIFACT_FILE ($ARTIFACT_FILE) cannot both be specified --- "
+	echo " --- ERROR: ARTIFACT_DIRECTORY ($ARTIFACT_DIRECTORY) and ARTIFACT_FILE ($ARTIFACT_FILE) cannot both be specified --- "
 	exit 1
 fi
 
 shopt -s nocasematch
 if [[ "$BUILD_TOOL" == "maven" ]]; then 
-	RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version | grep -e 'Building')
+	RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version | grep 'Building')
 	RELEASE_VERSION=$(echo $RELEASE_VERSION | awk {'print $NF'})
 elif [[ "$BUILD_TOOL" == "gradle" ]]; then
 	RELEASE_VERSION=$(./gradlew properties | grep ^version:)
 	RELEASE_VERSION=${RELEASE_VERSION##* }
 else 
-	echo -e " --- ERROR: build tool must either be maven or gradle (you entered: $BUILD_TOOL) --- "
+	echo " --- ERROR: build tool must either be maven or gradle (you entered: $BUILD_TOOL) --- "
 	exit 1
 fi
 shopt -u nocasematch
@@ -121,13 +121,13 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 
 	EXECUTABLE_PATH_EXISTS=$(find $EXECUTABLE_PATH -name "github-release")
 	if [ -z "$EXECUTABLE_PATH_EXISTS" ]; then 
-		echo -e " --- github-release executable does not already exist on this machine --- "
+		echo " --- github-release executable does not already exist on this machine --- "
 		GO=$(which go) #need to accomodate the windows equivalent
 		if [ -z "$GO" ]; then #if go isn't installed on the machine, pull binaries from releases directly
 			OS_TYPE=$(uname -a | awk {'print $1'}) 
 			OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]') #convert OSTYPE to lower case
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
-				echo -e " --- Getting necessary github-release executable from github.com/aktau/github-release --- "
+				echo " --- Getting necessary github-release executable from github.com/aktau/github-release --- "
 				curl -OL "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
 				tar -zxvf "$OS_TYPE"-amd64-github-release.tar.bz2
 				mv bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH
@@ -141,7 +141,7 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
 			fi
 		else
-			echo -e " --- Getting executable via go command: go get github.com/aktau/github-release --- "
+			echo " --- Getting executable via go command: go get github.com/aktau/github-release --- "
 			go get github.com/aktau/github-release
 			if [[ -z "$GOPATH" ]]; then
 				mv ~/go/bin/github-release $EXECUTABLE_PATH 
@@ -162,20 +162,20 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 	REPO_NAME=${REPO_NAME##*/}
 	REPO_NAME=${REPO_NAME%.*}
 	
-	echo -e "Build Tool: $BUILD_TOOL"
-	echo -e "Release Description specified: $DESCRIPTION"
-	echo -e "Repository Name: $REPO_NAME"
-	echo -e "Release Version: $RELEASE_VERSION"
+	echo "Build Tool: $BUILD_TOOL"
+	echo "Release Description specified: $DESCRIPTION"
+	echo "Repository Name: $REPO_NAME"
+	echo "Release Version: $RELEASE_VERSION"
 
 	RELEASE_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release release --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $RELEASE_VERSION --description "$DESCRIPTION" 2>&1)
 	if [ -z "$RELEASE_COMMAND_OUTPUT" ]; then
-		echo -e " --- Release posted to GitHub --- "
+		echo " --- Release posted to GitHub --- "
 
 		if ! [ -z "$ARTIFACT_FILE" ]; then 
 			ARTIFACT_FILE=$(find . -iname "$ARTIFACT_FILE")
 			ARTIFACT_NAME=$(basename "$ARTIFACT_FILE")
-			echo -e "Artifact File: $ARTIFACT_FILE"
-			echo -e "Artifact Name: $ARTIFACT_NAME"
+			echo "Artifact File: $ARTIFACT_FILE"
+			echo "Artifact Name: $ARTIFACT_NAME"
 			POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)	
 		elif ! [ -z "$ARTIFACT_DIRECTORY" ]; then
 			TEMP=$ARTIFACT_DIRECTORY
@@ -192,32 +192,32 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 
 			if ! [ -z "$ARTIFACT_FILE" ]; then
 				ARTIFACT_NAME=$(basename "$ARTIFACT_FILE")
-				echo -e "Artifact ARTIFACT_FILE: $ARTIFACT_FILE"
-				echo -e "Artifact Name: $ARTIFACT_NAME" 
+				echo "Artifact ARTIFACT_FILE: $ARTIFACT_FILE"
+				echo "Artifact Name: $ARTIFACT_NAME" 
 				POST_COMMAND_OUTPUT=$(exec $EXECUTABLE_PATH/github-release upload --user $ORGANIZATION --repo $REPO_NAME --tag $RELEASE_VERSION --name $ARTIFACT_NAME --file "$ARTIFACT_FILE" 2>&1)
 			else 
-				echo -e " --- No artifact files found. No artifact will be attached to release. --- "
+				echo " --- No artifact files found. No artifact will be attached to release. --- "
 				POST_COMMAND_OUTPUT="null"
 			fi		
 		fi
 
 		if [ -z "$POST_COMMAND_OUTPUT" ]; then
-			echo -e " --- Artifacts attached to release on GitHub --- "
-			echo -e " --- GitHub Autorelease Script Ending --- "
+			echo " --- Artifacts attached to release on GitHub --- "
+			echo " --- GitHub Autorelease Script Ending --- "
 		elif [[ "$POST_COMMAND_OUTPUT" == "null" ]]; then
-			echo -e " --- GitHub Autorelease Script Ending --- "
+			echo " --- GitHub Autorelease Script Ending --- "
 			exit 1
 		else
-			echo -e " --- $POST_COMMAND_OUTPUT --- "
+			echo " --- $POST_COMMAND_OUTPUT --- "
 			exit 1
 		fi
 
 	else 
-		echo -e " --- $RELEASE_COMMAND_OUTPUT --- "
+		echo " --- $RELEASE_COMMAND_OUTPUT --- "
 		exit 1
 	fi 
 
 else
-	echo -e " --- SNAPSHOT found in version name OR version name doesn't follow convention x.y.z where x,y,z are integers separated by .'s - ($RELEASE_VERSION) - NOT releasing to GitHub --- "
+	echo " --- SNAPSHOT found in version name OR version name doesn't follow convention x.y.z where x,y,z are integers separated by .'s - ($RELEASE_VERSION) - NOT releasing to GitHub --- "
 fi
 
