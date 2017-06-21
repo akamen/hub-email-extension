@@ -150,10 +150,10 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				echo $EXECUTABLE_PATH
 				ls $EXECUTABLE_PATH
 				echo " "
-				bzip2 -dk $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
-				ls $EXECUTABLE_PATH
-				echo " "
-				tar -xvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar -C $EXECUTABLE_PATH/
+				# bzip2 -dk $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
+				# ls $EXECUTABLE_PATH
+				# echo " "
+				tar -vxjf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				ls $EXECUTABLE_PATH
 				echo " "
 				mv $EXECUTABLE_PATH/bin/"$OS_TYPE"/amd64/github-release $EXECUTABLE_PATH/github-release
