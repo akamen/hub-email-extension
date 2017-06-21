@@ -151,7 +151,8 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 				echo $EXECUTABLE_PATH
 				ls $EXECUTABLE_PATH
 				echo "pwd: $PWD"
-								
+				ls $PWD
+
 				tar -zxvf $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2
 				
 				echo " "
