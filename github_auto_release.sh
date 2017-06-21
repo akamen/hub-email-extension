@@ -146,32 +146,9 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
 				curl -OL "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
-				
-				echo " "
-				echo $EXECUTABLE_PATH
-				ls $EXECUTABLE_PATH
-				echo "pwd: $PWD"
-				ls $PWD
-
 				tar -zxvf "$OS_TYPE"-amd64-github-release.tar.bz2
-				
-				echo " "
-				ls $PWD
-				echo " "
-
 				mv bin/darwin/amd64/github-release $EXECUTABLE_PATH
-
-				echo " "
-				ls $EXECUTABLE_PATH
-				echo "pwd: $PWD"
-
-				rm -R "$OS_TYPE"-amd64-github-release.tar.bz2
-				
-				echo " "
-				ls $EXECUTABLE_PATH
-				echo "pwd: $PWD"
-				
-
+				rm -R "$OS_TYPE"-amd64-github-release.tar.bz2 bin
 				echo " --- github-release executable now located in $EXECUTABLE_PATH --- "
 			elif [[ "$OS_TYPE" == "mingw" ]]; then #windows section needs to be worked on
 				curl -o $EXECUTABLE_PATH/windows-amd64-github-release.zip "https://github.com/aktau/github-release/releases/download/v0.7.2/windows-amd64-github-release.zip" 
