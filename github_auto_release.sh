@@ -124,6 +124,8 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 		mkdir -p "$EXECUTABLE_PATH"
 	fi
 
+
+
 	EXECUTABLE_PATH_EXISTS=$(find $EXECUTABLE_PATH -name "github-release")
 	if [ -z "$EXECUTABLE_PATH_EXISTS" ]; then 
 		echo -e " --- ${BLUE}github-release executable does not already exist on this machine${NC} --- "
@@ -131,6 +133,22 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 		if [ -z "$GO" ]; then #if go isn't installed on the machine, pull binaries from releases directly
 			OS_TYPE=$(uname -a | awk {'print $1'}) 
 			OS_TYPE=$(echo "$OS_TYPE" | tr '[:upper:]' '[:lower:]') #convert OSTYPE to lower case
+			
+			WGET=$(which wget)
+			if [ -z $WGET ]; then
+				if [ "$OS_TYPE" == "darwin" ]; then
+					# curl -O http://ftp.gnu.org/gnu/wget/wget-1.14.tar.gz
+					# tar xvzf wget-1.14.tar.gz
+					# cd wget-1.14
+					# ./configure --with-ssl=openssl
+					# make
+					# sudo make install
+					brew install wget
+				elif [ "$OS_TYPE" == "linux" ]; then
+
+				fi
+			fi
+
 			if [[ "$OS_TYPE" == "darwin" ]] || [[ "$OS_TYPE" == "linux" ]]; then
 				echo -e " --- ${BLUE}Getting necessary github-release executable from github.com/aktau/github-release${NC} --- "
 				wget -O $EXECUTABLE_PATH/"$OS_TYPE"-amd64-github-release.tar.bz2 "https://github.com/aktau/github-release/releases/download/$EXECUTABLE_VERSION/$OS_TYPE-amd64-github-release.tar.bz2" 
