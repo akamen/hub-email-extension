@@ -40,7 +40,7 @@ do
     if [[ "$VAL" == -* ]] || [[ "$VAL" == --* ]] || [[ -z "$VAL" ]]; then #should this just be a check for an empty string, or should it be like it is?
     	if [[ "$FLAG" != "-h" ]] && [[ "$FLAG" != "--help" ]]; then
 	    	echo " --- ERROR: Incorrectly formatted VAL input. Flag/Value pair < $FLAG, $VAL > causing error. --- "
-	    	exit 1
+	    	return
     	fi
     fi
 
@@ -80,21 +80,21 @@ do
 			echo "-o|--organization		   		optional: the name of the organization under which the repo is located (default is blackducksoftware)"
 			echo "-ev|--executableVersion   			optional: which version of the GitHub-Release executable to be used (default is v0.7.2)"
 			echo "-ep|--executablePath 	   			optional: where on the user's machine the GitHub-Release executable will live (defualt is ~/temp/blackducksoftware)"
-			exit 1
+			return
 			;;
 		*)
 			echo " --- ERROR: unrecognized flag variable in Flag/Value pair: < $FLAG, $VAL > --- "
-			exit 1
+			return
 			;;
     esac
 done
 
 if [ -z "$BUILD_TOOL" ]; then 
     echo " --- ERROR: BUILD_TOOL ($BUILD_TOOL) (-b|--buildTool) must be specified --- "
-    exit 1
+    return
 elif ! [ -z "$ARTIFACT_DIRECTORY" ] && ! [ -z "$ARTIFACT_FILE"]; then
 	echo " --- ERROR: ARTIFACT_DIRECTORY ($ARTIFACT_DIRECTORY) and ARTIFACT_FILE ($ARTIFACT_FILE) cannot both be specified --- "
-	exit 1
+	return
 fi
 
 shopt -s nocasematch
@@ -106,7 +106,7 @@ elif [[ "$BUILD_TOOL" == "gradle" ]]; then
 	RELEASE_VERSION=${RELEASE_VERSION##* }
 else 
 	echo " --- ERROR: build tool must either be maven or gradle (you entered: $BUILD_TOOL) --- "
-	exit 1
+	return
 fi
 shopt -u nocasematch
 
@@ -206,15 +206,15 @@ if [[ "$RELEASE_VERSION" =~ [0-9]+[.][0-9]+[.][0-9]+ ]] && [[ "$RELEASE_VERSION"
 			echo " --- GitHub Autorelease Script Ending --- "
 		elif [[ "$POST_COMMAND_OUTPUT" == "null" ]]; then
 			echo " --- GitHub Autorelease Script Ending --- "
-			exit 1
+			return
 		else
 			echo " --- $POST_COMMAND_OUTPUT --- "
-			exit 1
+			return
 		fi
 
 	else 
 		echo " --- $RELEASE_COMMAND_OUTPUT --- "
-		exit 1
+		return
 	fi 
 
 else
